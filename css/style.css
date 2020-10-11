@@ -1,0 +1,147 @@
+html {
+    box-sizing: border-box;
+}
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+body {
+    font-family: helvetica, arial, sans-serif;
+    margin: 0;
+}
+header {
+    user-select: none;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    margin-top: 2em;
+}
+header > h1{
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-align: center;
+}
+
+nav {
+    user-select: none;
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    /* position: sticky;
+    top: 0;
+    background: rgba(255,255,255,0.85); */
+}
+nav > h5 {
+    margin: 0.75em;
+}
+
+.hover-effect:hover {
+    cursor: crosshair;
+}
+
+#img-container {
+    max-width: 50vw;
+    width: 50vw;
+}
+#img-container > div > img {
+    width: 50vw;
+    height: auto;
+    margin: 0.25em 0 0.25em 0;
+}
+#img-container > div > p {
+    font-size: 16px;
+    font-weight: 500;
+}
+#img-container > div > h4 {
+    text-transform: uppercase;
+    margin-top: 0;
+}
+#img-container > div > li {
+    list-style: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgb(50,50,50);
+}
+.img-info {
+    margin-bottom: 1em;
+}
+
+#home-wrap {
+    margin: 3em 4em 8em 4em;
+    /* display: none; */
+}
+
+#topic-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 3em 4em 8em 4em;
+    /* display: none; */
+}
+.topic-div {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1em;
+    background-color: rgba(175,175,175,0.9);
+}
+#topic-wrap > div > h2 {
+    user-select: none;
+    font-weight: 300;
+    text-transform: uppercase;
+}
+
+#photo-wrap {
+    margin: 3em 4em 8em 4em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#photo-wrap > li {
+    user-select: none;
+    list-style: none;
+    font-weight: 500;
+    text-transform: uppercase;
+    padding: 0.2em;
+    line-height: 1.5em;
+}
+
+footer {
+    user-select: none;
+    width: 100vw;
+    height: 60px;
+    color: black;
+    font-size: 12px;
+    /* background-color: rgba(175,175,175,0.9); */
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+}
+footer > p {
+    font-weight: 300;
+    font-size: 10px;
+    margin-left: 30px;
+}
+
+@media screen and (max-width: 1024px) {
+    main {
+        flex-direction: column;
+        align-items: center;
+    }
+    #img-container {
+        margin: 0;
+        max-width: 90vw;
+        width: 90vw;
+    }
+    #img-container > div > img {
+        width: 90vw;
+        height: auto;
+    }
+}
