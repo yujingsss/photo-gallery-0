@@ -180,11 +180,11 @@ function photoPage(data) {
                 let removeli = document.querySelectorAll("#photo-wrap > li");
                 for (let i = 0; i < removeli.length; i ++) {
                     removeli[i].style.backgroundColor = "transparent";
-                    removeli[i].style.borderBottom = "none";
+                    // removeli[i].style.borderBottom = "none";
                 }
                 //assign selected image's title styling
                 li.style.backgroundColor = "rgba(0,0,0,0.15)";
-                li.style.borderBottom = "1px solid rgba(0,0,0,0.5)";
+                // li.style.borderBottom = "1px solid rgba(0,0,0,0.5)";
                 enterdetailview = true;
                 //screen size check
                 if (window.innerWidth <= 800) {
@@ -213,7 +213,7 @@ function photoPage(data) {
                     let removeli = document.querySelectorAll("#photo-wrap > li");
                     for (let i = 0; i < removeli.length; i ++) {
                         removeli[i].style.backgroundColor = "transparent";
-                        removeli[i].style.borderBottom = "none";
+                        // removeli[i].style.borderBottom = "none";
                     }
                     //remove labeldiv
                     labeldiv.innerHTML = "";
@@ -331,7 +331,7 @@ function navcontrol(imgwrap, data){
         let removeli = document.querySelectorAll("#photo-wrap > li");
         for (let i = 0; i < removeli.length; i ++) {
             removeli[i].style.backgroundColor = "transparent";
-            removeli[i].style.borderBottom = "none";
+            // removeli[i].style.borderBottom = "none";
         }
         let labeldiv = document.querySelectorAll(".label-div");
         for (let i = 0; i < labeldiv.length; i++) {
