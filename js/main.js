@@ -24,122 +24,219 @@ base('Photos').select({
     if (err) { console.error(err); return; }
 });
 
-function homePage(data) {
-    let navindex = 0;
+let enterdetailview = false;
 
+function homePage(data) {
     let homes = document.getElementById("home-wrap");
     homes.style.display = "none";
-    homes.style.justifyContent = "center";
-    
-    let imgcontainer = document.createElement("div");
-    imgcontainer.id = "img-container";
-    imgcontainer.style.display = "flex";
-    imgcontainer.style.flexDirection = "column";
-    imgcontainer.style.margin = "1em 4em 8em 4em";
-    homes.appendChild(imgcontainer);
+
     data.forEach(eachdata => {
         if (eachdata.fields.Name == "Cover Image") {
-            // console.log(eachdata);
             let imgdata = eachdata.fields.Image;
-            let imgdiv;
+            let imgurl = [];
+            let imgtype = [];
+            let imgtitle = [];
             imgdata.forEach(eachimg => {
-                // console.log(eachimg);
-                imgdiv = document.createElement("div");
-                imgdiv.innerHTML = `<img src="${eachimg.url}" alt="${eachimg.type}" title = "${eachimg.filename}">`;
-                imgcontainer.appendChild(imgdiv); 
+                imgurl.push(eachimg.url);
+                imgtype.push(eachimg.type);
+                imgtitle.push(eachimg.filename);
             });
+            let imgdiv = document.createElement("div");
+            imgdiv.classList.add("img-slide");
+            let imgindex = 0;
+            imgdiv.innerHTML = `<img src="${imgurl[imgindex]}" alt="${imgtype[imgindex]}" title = "${imgtitle[imgindex]}">`;
+            setInterval(()=>{
+                // console.log(imgindex);
+                imgindex ++;
+                imgindex = imgindex % imgdata.length;
+                imgdiv.innerHTML = `<img src="${imgurl[imgindex]}" alt="${imgtype[imgindex]}" title = "${imgtitle[imgindex]}">`;
+                homes.appendChild(imgdiv);
+            },5000);
+            homes.appendChild(imgdiv);
         }
     });
 }
 
-function topicPage(data) {
-    // console.log(data);
-    let navindex = 1;
 
+function topicPage(data) {
+    let main = document.getElementById("main");
     let imgcontainer = document.createElement("div");
     imgcontainer.id = "img-container";
     let topics = document.getElementById("topic-wrap");
     topics.style.display = "none";
+    topics.classList.add("topic-wrap-thumbnail");
     let topicname = data[0].fields.Topic[0];
+    //array to store all topics
     let alltopics = [];
+    //store image thumbnail urls
+    let allurls = [];
     //check duplicate topics
     data.forEach(eachdata => {
         if ( eachdata.fields.Topic[0] != topicname) {
-            // console.log(eachdata.fields.Topic[0]);
             let topicdiv = document.createElement("div");
+            allurls.push(eachdata.fields.Image[0].thumbnails.large.url);
+            topicdiv.style.backgroundImage = `url("${eachdata.fields.Image[0].thumbnails.large.url}")`;
             let topic = document.createElement("h2");
             topic.className = "hover-effect";
             topicname = eachdata.fields.Topic[0];
             topic.innerText = topicname;
             topicdiv.appendChild(topic);
             topics.appendChild(topicdiv);
+            //add topic to alltopics array
             alltopics.push(topicname);
             topic.classList.add("topic-heading");
-            topicdiv.classList.add("topic-div", "topic-container");
         } 
     });
     // console.log(alltopics);
     //find records with same topic
-    let topicheading = document.getElementsByClassName("topic-heading");
-    // console.log(topicheading);
-    // let topicdiv = document.getElementsByClassName("topic-div");
-    // console.log(topicdiv);
+    let topicheading = document.querySelectorAll("#topic-wrap > div > h2");
     for (let i = 0; i < topicheading.length; i ++) {
         topicheading[i].addEventListener("click", ()=>{
+            let removetopicdiv = document.querySelectorAll("#topic-wrap > div");
+            for (let j = 0; j < removetopicdiv.length; j++) {
+                removetopicdiv[j].style.backgroundImage = "";
+            }
+            topics.classList.replace("topic-wrap-thumbnail","topic-wrap-large");
+            //remove previous selected topic styling
+            let removeheading = document.querySelectorAll("#topic-wrap > div > h2");
+            for (let i = 0; i < removeheading.length; i++) {
+                removeheading[i].style.backgroundColor = "transparent";
+                removeheading[i].style.borderBottom = "none";
+            }
+            //style selected topic
+            topicheading[i].style.backgroundColor = "rgba(0,0,0,0.15)";
+            topicheading[i].style.borderBottom = "1px solid rgba(0,0,0,0.5)";
+            enterdetailview = true;
+            //check screen size
+            if (window.innerWidth <= 800) {
+                if (enterdetailview == true) {
+                    topics.classList.add("topic-wrap-small");
+                    topics.classList.remove("topic-wrap-large", "topic-wrap-thumbnail");
+                } else {
+                    topics.classList.add("topic-wrap-large");
+                    topics.classList.remove("topic-wrap-small", "topic-wrap-thumbnail");
+                }
+            }
             imgcontainer.innerHTML = "";
             topics.style.display = "block";
             alltopics.forEach(eachtopic => {
                 if (eachtopic == topicheading[i].innerHTML) {
-                    // console.log(eachtopic);
                     data.forEach(eachdata => {
                         if (eachdata.fields.Topic[0] == eachtopic) {
-                            showdetail(eachdata, navindex, imgcontainer);
-                            // for (let j = 0; j < topicdiv.length; j ++){
-                            //     topicdiv[j].classList.remove("topic-div");
-                            // }
+                            showdetail(eachdata, imgcontainer);
                         }
+                    });
+                    let backicon = document.createElement("h4");
+                    backicon.classList.add("hover-effect", "back-icon");
+                    backicon.innerText = "Back";
+                    imgcontainer.appendChild(backicon);
+                    backicon.addEventListener("click", () => {
+                        //palce bg img
+                        let removetopicdiv = document.querySelectorAll("#topic-wrap > div");
+                        let imglengthsize = allurls.length;
+                        for (let i = 0; i < imglengthsize; i ++) {
+                            removetopicdiv[i].style.backgroundImage = `url("${allurls[i]}")`;
+                        }
+                        //remove selected topic styling
+                        let removeheading = document.querySelectorAll("#topic-wrap > div > h2");
+                        for (let i = 0; i < removeheading.length; i++) {
+                            removeheading[i].style.backgroundColor = "transparent";
+                            removeheading[i].style.borderBottom = "none";
+                        }
+                        enterdetailview = false;
+                        topics.classList.add("topic-wrap-thumbnail");
+                        topics.classList.remove("topic-wrap-large", "topic-wrap-small");
+                        topics.style.display = "flex";
+                        imgcontainer.style.display = "none";
+                        main.style.display = "block";
                     });
                 }
             });
         });
     }
-    navcontrol(navindex, imgcontainer);
+    navcontrol(imgcontainer, allurls);
 }   
 
 function photoPage(data) {
-    // console.log(data);
-    let navindex = 2;
-
+    document.getElementById("nav-photo").style.borderBottom = "1.5px solid rgba(0,0,0,0.5)";
+    let main = document.getElementById("main");
     let imgcontainer = document.createElement("div");
     imgcontainer.id = "img-container";
     let photos = document.getElementById("photo-wrap");
+    photos.classList.add("photo-wrap-large");
+    //add labeldiv
+    let labeldiv = document.createElement("div");
+    labeldiv.className = "label-div";
     data.forEach(eachdata => {
-        let photoname = eachdata.fields.Name;
-        let li = document.createElement("li");
-        li.className = "hover-effect";
-        li.innerText = photoname;
-        photos.appendChild(li); 
-        li.addEventListener("click", ()=> {
-            // console.log(eachdata);
-            imgcontainer.innerHTML = "";
-            showdetail(eachdata, navindex, imgcontainer);
-        });
+        if (eachdata.fields.Name != "Cover Image") {
+            let photoname = eachdata.fields.Name;
+            let li = document.createElement("li");
+            li.className = "hover-effect";
+            li.innerText = photoname;
+            photos.appendChild(li); 
+            li.addEventListener("click", ()=> {
+                //clear labeldiv content & remove selected title styling
+                labeldiv.innerHTML = "";
+                let removeli = document.querySelectorAll("#photo-wrap > li");
+                for (let i = 0; i < removeli.length; i ++) {
+                    removeli[i].style.backgroundColor = "transparent";
+                    removeli[i].style.borderBottom = "none";
+                }
+                //assign selected image's title styling
+                li.style.backgroundColor = "rgba(0,0,0,0.15)";
+                li.style.borderBottom = "1px solid rgba(0,0,0,0.5)";
+                enterdetailview = true;
+                //screen size check
+                if (window.innerWidth <= 800) {
+                    if (enterdetailview == true) {
+                        photos.classList.replace("photo-wrap-large", "photo-wrap-small");
+                    }
+                }
+                //detailed images
+                imgcontainer.innerHTML = "";
+                showdetail(eachdata, imgcontainer);
+                //show labels
+                eachdata.fields.Label.forEach(eachlabel => {
+                    // console.log(eachlabel);
+                    let label = document.createElement("li");
+                    label.innerText = `#${eachlabel}`;
+                    labeldiv.appendChild(label);
+                });
+                photos.appendChild(labeldiv);
+                //back icon
+                let backicon = document.createElement("h4");
+                backicon.classList.add("hover-effect", "back-icon");
+                backicon.innerText = "Back";
+                imgcontainer.appendChild(backicon);
+                backicon.addEventListener("click", () => {
+                    //remove selected image's title styling
+                    let removeli = document.querySelectorAll("#photo-wrap > li");
+                    for (let i = 0; i < removeli.length; i ++) {
+                        removeli[i].style.backgroundColor = "transparent";
+                        removeli[i].style.borderBottom = "none";
+                    }
+                    //remove labeldiv
+                    labeldiv.innerHTML = "";
+                    enterdetailview = false;
+                    photos.style.display = "flex";
+                    photos.classList.replace("photo-wrap-small", "photo-wrap-large");
+                    imgcontainer.style.display = "none";
+                    main.style.display = "block";
+                });
+            });
+        }
     });
-    navcontrol(navindex, imgcontainer);
+    navcontrol(imgcontainer, '');
 }
 
-function showdetail(detaildata, index, imgwrap){
-    // console.log(detaildata);
+function showdetail(detaildata, imgwrap){
     imgwrap.style.display = "flex";
     imgwrap.style.flexDirection = "column";
     imgwrap.style.alignItems = "flex-start";
     imgwrap.style.margin = "3em 4em 8em 4em";
 
-    let topics = document.getElementById("topic-wrap");
-    // let homes = document.getElementById("home-wrap");
     let photos = document.getElementById("photo-wrap");
     let main = document.getElementById("main");
-    // let topicdiv = document.getElementsByClassName("topic-container");
 
     let imgdata = detaildata.fields.Image;
     main.appendChild(imgwrap);
@@ -164,41 +261,20 @@ function showdetail(detaildata, index, imgwrap){
         photos.style.display = "none";
         imgwrap.style.alignItems = "center";
     }
-
+    imgdiv = document.createElement("div");
+    imgdiv.className = "img-div";
     imgdata.forEach(eachimg => {
         // console.log(eachimg);
-        imgdiv = document.createElement("div");
-        imgdiv.innerHTML = `<img src="${eachimg.url}" alt="${eachimg.type}" title = "${eachimg.filename}">`;
+        img = document.createElement("img");
+        img.src = eachimg.url;
+        img.alt = "";
+        img.title = eachimg.filename;
+        imgdiv.appendChild(img);
         imgwrap.appendChild(imgdiv); 
     });
-
-    let backicon = document.createElement("h4");
-    backicon.className = "hover-effect";
-    backicon.innerText = "BACK";
-    backicon.style.userSelect = "none";
-    backicon.style.fontWeight = "500";
-    imgwrap.appendChild(backicon);
-
-    backicon.addEventListener("click", () => {
-        // console.log(index);
-        if (index == 1) {
-            topics.style.display = "flex";
-            imgwrap.style.display = "none";
-            main.style.display = "block";
-        }
-        else if (index == 2) {
-            photos.style.display = "flex";
-            imgwrap.style.display = "none";
-            main.style.display = "block";
-        } 
-        else if (index = 0) {
-
-        }
-    });
-    navcontrol(index, imgwrap);
 }
 
-function navcontrol(index, imgwrap){
+function navcontrol(imgwrap, data){
     let main = document.getElementById("main");
     let homenav = document.getElementById("nav-home");
     let topicnav = document.getElementById("nav-topic");
@@ -208,8 +284,11 @@ function navcontrol(index, imgwrap){
     let photos = document.getElementById("photo-wrap");
     // let imgwrap = document.getElementById("img-container");
     homenav.addEventListener("click",()=>{
+        document.getElementById("nav-photo").style.borderBottom = "none";
+        document.getElementById("nav-topic").style.borderBottom = "none";
+        document.getElementById("nav-home").style.borderBottom = "1.5px solid rgba(0,0,0,0.5)";
         // console.log("Home");
-        homes.style.display = "flex";
+        homes.style.display = "block";
         topics.style.display = "none";
         photos.style.display = "none";
         imgwrap.innerHTML = "";
@@ -218,15 +297,48 @@ function navcontrol(index, imgwrap){
     });
     topicnav.addEventListener("click",()=>{
         // console.log("topic");
+        document.getElementById("nav-topic").style.borderBottom = "1.5px solid rgba(0,0,0,0.5)";
+        document.getElementById("nav-photo").style.borderBottom = "none";
+        document.getElementById("nav-home").style.borderBottom = "none";
+        //topic bg img
+        let removetopicdiv = document.querySelectorAll("#topic-wrap > div");
+        let imglengthsize = data.length;
+        for (let i = 0; i< imglengthsize; i ++) {
+            removetopicdiv[i].style.backgroundImage = `url("${data[i]}")`;
+        }
+        //remove selected topic styling
+        let removeheading = document.querySelectorAll("#topic-wrap > div > h2");
+        for (let i = 0; i < removeheading.length; i++) {
+            removeheading[i].style.backgroundColor = "transparent";
+            removeheading[i].style.borderBottom = "none";
+        }
+        enterdetailview = false;
         homes.style.display = "none";
         topics.style.display = "flex";
+        topics.classList.add("topic-wrap-thumbnail");
+        topics.classList.remove("topic-wrap-large", "topic-wrap-small");
         photos.style.display = "none";
         imgwrap.innerHTML = "";
         imgwrap.style.display = "none";
         main.style.display = "block";
     });
     photonav.addEventListener("click",()=>{
+        document.getElementById("nav-photo").style.borderBottom = "1.5px solid rgba(0,0,0,0.5)";
+        document.getElementById("nav-home").style.borderBottom = "none";
+        document.getElementById("nav-topic").style.borderBottom = "none";
         // console.log("photo");
+        //remove selected image's title styling
+        let removeli = document.querySelectorAll("#photo-wrap > li");
+        for (let i = 0; i < removeli.length; i ++) {
+            removeli[i].style.backgroundColor = "transparent";
+            removeli[i].style.borderBottom = "none";
+        }
+        let labeldiv = document.querySelectorAll(".label-div");
+        for (let i = 0; i < labeldiv.length; i++) {
+            labeldiv[i].innerHTML = "";
+        }
+        enterdetailview = false;
+        photos.classList.replace("photo-wrap-small", "photo-wrap-large");
         homes.style.display = "none";
         topics.style.display = "none";
         photos.style.display = "flex";
@@ -235,3 +347,36 @@ function navcontrol(index, imgwrap){
         main.style.display = "block";
     });
 }
+
+//media query
+let photos = document.querySelector("#photo-wrap");
+let topics = document.querySelector("#topic-wrap");
+let x = window.matchMedia("(max-width: 800px)");
+function screenTest(e){
+    if (e.matches) {
+        if (enterdetailview == true) {
+            topics.classList.add("topic-wrap-small");
+            topics.classList.remove("topic-wrap-large", "topic-wrap-thumbnail");
+            photos.classList.replace("photo-wrap-large", "photo-wrap-small");
+        } 
+        if (enterdetailview == false) {
+            topics.classList.add("topic-wrap-thumbnail");
+            topics.classList.remove("topic-wrap-large", "topic-wrap-small");
+            photos.classList.replace("photo-wrap-small", "photo-wrap-large");
+        }
+    } 
+    else {
+        photos.classList.replace("photo-wrap-small", "photo-wrap-large");
+        if (enterdetailview == true) {
+            topics.classList.add("topic-wrap-large");
+            topics.classList.remove("topic-wrap-small", "topic-wrap-thumbnail");
+        }
+        if (enterdetailview == false) {
+            topics.classList.add("topic-wrap-thumbnail");
+            topics.classList.remove("topic-wrap-large", "topic-wrap-small");
+        }
+    }
+}
+x.addListener(screenTest);
+
+
