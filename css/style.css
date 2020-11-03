@@ -39,6 +39,9 @@ nav > h5 {
     cursor: crosshair;
     text-decoration: underline;
 }
+.hover-effect-0:hover{
+    cursor: crosshair;
+}
 
 #img-container {
     max-width: 50vw;
@@ -50,7 +53,7 @@ nav > h5 {
     margin: 0.25em 0 0.25em 0;
 }
 #img-container > div > p {
-    font-size: 16px;
+    /* font-size: 16px; */
     font-weight: 500;
 }
 #img-container > div > h4 {
@@ -61,7 +64,7 @@ nav > h5 {
     list-style: none;
     font-size: 14px;
     font-weight: 500;
-    color: rgb(50,50,50);
+    color: black;
 }
 .img-info {
     margin-bottom: 0.5em;

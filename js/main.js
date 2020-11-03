@@ -77,7 +77,7 @@ function topicPage(data) {
             allurls.push(eachdata.fields.Image[0].thumbnails.large.url);
             topicdiv.style.backgroundImage = `url("${eachdata.fields.Image[0].thumbnails.large.url}")`;
             let topic = document.createElement("h2");
-            topic.className = "hover-effect";
+            topic.className = "hover-effect-0";
             topicname = eachdata.fields.Topic[0];
             topic.innerText = topicname;
             topicdiv.appendChild(topic);
