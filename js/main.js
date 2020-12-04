@@ -254,8 +254,8 @@ function showdetail(detaildata, imgwrap){
             <li>${detaildata.fields.Year}</li>
             <li>${detaildata.fields.Place}</li>
             <li>${detaildata.fields.Camera[0]}</li>
-            <p>${detaildata.fields.Description}</p>
         `;
+            // <p>${detaildata.fields.Description}</p>
         imgwrap.appendChild(imginfo);
     } else {
         photos.style.display = "none";
